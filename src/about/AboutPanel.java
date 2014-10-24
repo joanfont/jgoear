@@ -24,7 +24,7 @@ public class AboutPanel extends JPanel {
         jta.setColumns(20);
         jta.setLineWrap(true);
         jta.setRows(5);
-        jta.setText("jGoear 1.2");
+        jta.setText("jGoear 2.0\nJoan Font - http://www.joan-font.com/");
         JScrollPane jp = new JScrollPane();
         jp.setViewportView(jta);
         
