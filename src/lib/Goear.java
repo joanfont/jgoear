@@ -32,9 +32,9 @@ public class Goear extends Thread {
     public void search() {
         String LIST_OF_ELEMENTS = "ol.board_list";
         String LIST_ITEM = "li.board_item";
-        String META = ".meta";
-        String SONG_ID = ".who";
-        String SONG_ARTIST = ".description";
+        String SONG_ID = "redir";
+        String SONG_TITLE = "li.title";
+        String SONG_ARTIST = "li.band";
         String STATS = ".stats";
         String SONG_BRITATE = ".kbps";
         String SONG_LENGTH = ".length";
@@ -47,7 +47,7 @@ public class Goear extends Thread {
         Song song;
 
         Document searchResults;
-        Elements listOfElements;
+        Elements listOfElements, ul;
         n = 0;
         page = 1;
 
@@ -55,20 +55,21 @@ public class Goear extends Thread {
             itemsPerPage = Integer.parseInt(new SettingsFile().getItems());
             do {
                 searchResults = Jsoup.connect(baseURL).get();
-                if (n % 10 == 0) {
+                if ((n % 10 == 0) && n != 0) {
                     page++;
                     searchResults = Jsoup.connect(baseURL + "/" + page).get();
                 }
                 listOfElements = searchResults.select(LIST_OF_ELEMENTS + " " + LIST_ITEM);
-                listOfElementsSize = listOfElements.size();
+                listOfElementsSize = listOfElements.size();             
                 exit = (listOfElementsSize == 0);
                 if (!exit) {
                     for (Element e : listOfElements) {
-                        songID = e.getElementsByTag("a").select(SONG_ID).attr("href").split("/")[4];
-                        songName = e.getElementsByTag("div").select("h4").select("a").text();
-                        songArtist = e.getElementsByTag("ul").select(META).select("li").select(SONG_ARTIST).text();
-                        songBritate = e.getElementsByTag("ul").select(STATS).select(SONG_BRITATE).text();
-                        songLength = e.getElementsByTag("ul").select(STATS).select(SONG_LENGTH).text();
+                        ul = e.getElementsByTag("ul").select(".board_content");
+                        songID = ul.attr(SONG_ID).split("/")[4];
+                        songName = ul.select(SONG_TITLE).text();
+                        songArtist = ul.select(SONG_ARTIST).text();
+                        songBritate = ul.select(STATS).select(SONG_BRITATE).text();
+                        songLength = ul.select(STATS).select(SONG_LENGTH).text();
                         songURL = GOEAR_URL + "/" + songID;
                         song = new Song(songID, songName, songArtist, songBritate, songLength, songURL);
 
